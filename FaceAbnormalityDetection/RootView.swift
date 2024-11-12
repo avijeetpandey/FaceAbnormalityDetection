@@ -8,7 +8,13 @@
 import SwiftUI
 import CoreData
 
-struct RootView: View {    
+struct RootView: View {
+    
+    // clearning the previous data on app launch
+    init() {
+        CoreDataController.shared.clearAllData()
+    }
+    
     var body: some View {
         ImageSelectionView()
     }

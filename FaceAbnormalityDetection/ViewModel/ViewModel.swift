@@ -101,7 +101,7 @@ class ViewModel: ObservableObject {
     // save the captured/picked image to the coredata
     private func saveToCoreData(_ image: ImageInfoModel) {
         let newImageEntity = ImageEntity(context: context)
-        newImageEntity.imageData = image.image.jpegData(compressionQuality: 1.0)
+        newImageEntity.imageData = image.image.jpegData(compressionQuality: 0.25)
         newImageEntity.status = image.status.rawValue
         newImageEntity.abnormalities = image.abnormalities
         
@@ -114,7 +114,7 @@ class ViewModel: ObservableObject {
     }
     
     private func handleRedirectionForImageCount() {
-        if images.count >= 3 {
+        if images.count >= 10 {
             navigateToAbnormalityDisplayPage = true
         }
     }

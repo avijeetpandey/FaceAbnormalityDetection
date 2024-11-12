@@ -52,6 +52,7 @@ struct ImageDisplayView: View {
                 }
             }
         }
+        .scrollIndicators(.hidden)
         .navigationTitle("\(Constants.results)")
     }
 }

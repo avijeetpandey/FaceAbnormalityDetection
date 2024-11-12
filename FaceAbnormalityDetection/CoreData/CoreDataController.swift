@@ -9,7 +9,7 @@ import CoreData
 
 struct CoreDataController {
     static let shared = CoreDataController()
-
+    
     @MainActor
     static let preview: CoreDataController = {
         let result = CoreDataController(inMemory: true)
@@ -25,9 +25,9 @@ struct CoreDataController {
         }
         return result
     }()
-
+    
     let container: NSPersistentContainer
-
+    
     init(inMemory: Bool = false) {
         container = NSPersistentContainer(name: "FaceAbnormalityDetection")
         if inMemory {
@@ -52,5 +52,22 @@ struct CoreDataController {
             }
         }
     }
-
+    
+    func clearAllData() {
+        let context = container.viewContext
+        let entityNames = container.managedObjectModel.entities.map({ $0.name }).compactMap { $0 }
+        
+        for entityName in entityNames {
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+            
+            do {
+                try context.execute(deleteRequest)
+                try context.save()
+                Logger.shared.info("Data cleared from core data")
+            } catch {
+                Logger.shared.error("Failed to clear Core Data for entity \(entityName): \(error.localizedDescription)")
+            }
+        }
+    }
 }
