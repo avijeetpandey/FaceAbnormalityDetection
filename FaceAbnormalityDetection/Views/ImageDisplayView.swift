@@ -8,6 +8,7 @@
 import SwiftUI
 import CoreData
 
+// MARK: - ImageDisplayView
 struct ImageDisplayView: View {
     @Environment(\.managedObjectContext) private var context
     
@@ -18,28 +19,43 @@ struct ImageDisplayView: View {
     ) var images: FetchedResults<ImageEntity>
 
     var body: some View {
-        List(images) { imageEntity in
-            if let imageData = imageEntity.imageData,
-               let uiImage = UIImage(data: imageData) {
-                VStack {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(height: 200)
+        ScrollView {
+            ForEach(images) { imageEntity in
+                if let imageData = imageEntity.imageData,
+                   let uiImage = UIImage(data: imageData),
+                   let status = imageEntity.status,
+                   status == ImageStatus.processed.rawValue {
+                    
+                    VStack {
+                        ZStack {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 300)
 
-                    Text("\(Constants.status) : \(imageEntity.status ?? "\(Constants.unknown)")")
-                        .font(.headline)
+                            if let abnormalities = imageEntity.abnormalities {
+                                FacialOverlayView(abnormalities: abnormalities)
+                            }
+                        }
+                        .padding(.bottom)
 
-                    if let abnormalities = imageEntity.abnormalities {
-                        Text("\(Constants.abnormalities): \(abnormalities)")
-                            .font(.subheadline)
+                        Text("\(Constants.status) : \(imageEntity.status ?? "\(Constants.unknown)")")
+                            .font(.headline)
+                        
+                        if let abnormalities = imageEntity.abnormalities {
+                            Text("\(Constants.abnormalities): \(abnormalities)")
+                                .font(.subheadline)
+                                .padding(.top, 4)
+                        }
                     }
+                    .padding()
                 }
             }
         }
         .navigationTitle("\(Constants.results)")
     }
 }
+
 
 #Preview {
     ImageDisplayView()

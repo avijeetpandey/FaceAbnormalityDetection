@@ -11,7 +11,7 @@ import CoreData
 struct ImageSelectionView: View {
     @StateObject private var viewModel = ViewModel()
     @State private var showImagePicker = false
-    @State private var selectedSourceType: UIImagePickerController.SourceType = .photoLibrary
+    @State private var selectedSourceType: UIImagePickerController.SourceType = .camera
 
     var body: some View {
         NavigationView {
