@@ -396,7 +396,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"FaceAbnormalityDetection/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"FaceAbnormalityDetection/Resources/Preview Content\"";
 				DEVELOPMENT_TEAM = M75FSJ2W4F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -427,7 +427,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"FaceAbnormalityDetection/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"FaceAbnormalityDetection/Resources/Preview Content\"";
 				DEVELOPMENT_TEAM = M75FSJ2W4F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
