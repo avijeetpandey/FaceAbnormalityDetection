@@ -75,7 +75,7 @@ class ViewModel: ObservableObject {
         handleRedirectionForImageCount()
     }
     
-    func assignMockAbnormalities(to imageModel: ImageInfoModel) {
+    private func assignMockAbnormalities(to imageModel: ImageInfoModel) {
         DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 2.0) { [weak self] in
             DispatchQueue.main.async {
                 self?.updateImageStatus(imageModel,
