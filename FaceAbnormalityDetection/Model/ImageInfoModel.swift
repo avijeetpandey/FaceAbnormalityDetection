@@ -6,6 +6,7 @@
 //
 import SwiftUI
 
+// MARK: - ImageInfoModel
 struct ImageInfoModel: Identifiable {
     let id = UUID() // unique indentifier for each image
     var image: UIImage
