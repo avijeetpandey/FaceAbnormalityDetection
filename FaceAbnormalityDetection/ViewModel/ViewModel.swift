@@ -16,6 +16,7 @@ class ViewModel: ObservableObject {
     private let context = CoreDataController.shared.container.viewContext
     
     func handleImageCapture(image: UIImage) {
+        Logger.shared.debug("Capturing image.")
         let imageInfoModel = ImageInfoModel(image: image,
                                             status: .processing,
                                             abnormalities: nil)
@@ -25,8 +26,10 @@ class ViewModel: ObservableObject {
             guard let self = self else { return }
             
             if isFaceDetected {
+                Logger.shared.info("Face detected in captured image.")
                 assignMockAbnormalities(to: imageInfoModel)
             } else {
+                Logger.shared.warning("No face detected in captured image.")
                 updateImageStatus(imageInfoModel, status: .invalid)
             }
         }
@@ -35,6 +38,7 @@ class ViewModel: ObservableObject {
     }
     
     func handleImageSelection(image: UIImage) {
+        Logger.shared.debug("Selecting image from library.")
         let selectedImageInfoModel = ImageInfoModel(image: image,
                                                     status: .processing,
                                                     abnormalities: nil)
@@ -44,17 +48,21 @@ class ViewModel: ObservableObject {
     }
     
     private func detectFace(in image: UIImage, completion: @escaping (Bool) -> Void) {
+        Logger.shared.debug("Detecting face in image.")
         let faceDetectionRequest = VNDetectFaceRectanglesRequest { request, error in
             guard error == nil else {
+                Logger.shared.error("Face detection failed with error: \(String(describing: error?.localizedDescription))")
                 completion(false)
                 return
             }
             
             guard let results = request.results as? [VNFaceObservation] else {
+                Logger.shared.warning("No face observations found.")
                 completion(false)
                 return
             }
             
+            Logger.shared.info("Face detection completed with \(results.count) face(s) found.")
             completion(results.count > 0)
         }
         
@@ -67,7 +75,7 @@ class ViewModel: ObservableObject {
         handleRedirectionForImageCount()
     }
     
-    private func assignMockAbnormalities(to imageModel: ImageInfoModel) {
+    func assignMockAbnormalities(to imageModel: ImageInfoModel) {
         DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 2.0) { [weak self] in
             DispatchQueue.main.async {
                 self?.updateImageStatus(imageModel,
@@ -79,10 +87,14 @@ class ViewModel: ObservableObject {
     
     // updates the image status
     private func updateImageStatus(_ image: ImageInfoModel, status: ImageStatus, abnormalities: String? = nil) {
-        if let index = images.firstIndex(where: { $0.id == image.id }) {
-            images[index].status = status
-            images[index].abnormalities = abnormalities
-            saveToCoreData(images[index])
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            if let index = images.firstIndex(where: { $0.id == image.id }) {
+                images[index].status = status
+                images[index].abnormalities = abnormalities
+                saveToCoreData(images[index])
+                Logger.shared.info("Image status updated to \(status.rawValue).")
+            }
         }
     }
     
@@ -95,13 +107,14 @@ class ViewModel: ObservableObject {
         
         do {
             try context.save()
+            Logger.shared.info("Image saved to Core Data.")
         } catch {
-            print("Failed to save image:", error)
+            Logger.shared.error("Failed to save image to Core Data: \(error.localizedDescription)")
         }
     }
     
     private func handleRedirectionForImageCount() {
-        if images.count >= 10 {
+        if images.count >= 3 {
             navigateToAbnormalityDisplayPage = true
         }
     }
